@@ -1,0 +1,151 @@
+name: Check Paths
+author: Milad Irannejad
+description: >
+  Determines whether any files matching the given glob patterns changed between the relevant git commits.
+inputs:
+  paths:
+    description: >
+      A newline-separated list of glob patterns to check for changes.
+      Each line is passed to `git diff --name-only -- <pattern>`.
+    required: true
+outputs:
+  changed:
+    description: >
+      'true' if any files matching the given glob patterns changed, 'false' otherwise.
+    value: ${{ steps.changes.outputs.changed }}
+  changed_files:
+    description: >
+      A list of files that changed and matched at least one of the given glob patterns.
+      Empty if no files changed.
+    value: ${{ steps.changes.outputs.changed_files }}
+  base_sha:
+    description: >
+      The base commit SHA used for the diff.
+    value: ${{ steps.revisions.outputs.base }}
+  head_sha:
+    description: >
+      The head commit SHA used for the diff.
+    value: ${{ steps.revisions.outputs.head }}
+runs:
+  using: composite
+  steps:
+    - name: Print GitHub Context
+      if: 'false'
+      shell: bash
+      env:
+        GITHUB_CONTEXT: ${{ toJSON(github) }}
+      run: |
+        echo "$GITHUB_CONTEXT"
+        # cat "$GITHUB_EVENT_PATH" | jq .
+    - name: Resolve Revision Range
+      id: revisions
+      shell: bash
+      env:
+        EVENT_NAME:        ${{ github.event_name }}
+        DEFAULT_BRANCH:    ${{ github.event.repository.default_branch }}
+        PUSH_BEFORE:       ${{ github.event.before }}                     # SHA of the most recent commit before the push.
+        PUSH_AFTER:        ${{ github.event.after }}                      # SHA of the most recent commit after the push.
+        PULL_REQUEST_BASE: ${{ github.event.pull_request.base.sha }}      # SHA of the base ref of the pull request.
+        PULL_REQUEST_HEAD: ${{ github.event.pull_request.head.sha }}      # SHA of the head ref of the pull request.
+        MERGE_GROUP_BASE:  ${{ github.event.merge_group.base_sha }}       # SHA of the merge group's parent commit.
+        MERGE_GROUP_HEAD:  ${{ github.event.merge_group.head_sha }}       # SHA of the merge group head.
+      run: |
+        set -euo pipefail
+
+        BASE=""
+        HEAD=""
+
+        case "$EVENT_NAME" in
+          push)
+            # On the very first push to a branch, PUSH_BEFORE is all zeros.
+            if [[ "$PUSH_BEFORE" =~ ^0+$ ]]; then
+              echo "::notice::New branch detected."
+              echo "::notice::Falling back to merge-base with $DEFAULT_BRANCH."
+
+              git fetch origin --unshallow --quiet || git fetch origin --quiet
+              BASE=$(git merge-base HEAD "origin/$DEFAULT_BRANCH" 2>/dev/null)
+            else
+              BASE="$PUSH_BEFORE"
+            fi
+
+            HEAD="$PUSH_AFTER"
+            ;;
+          pull_request)
+            BASE="$PULL_REQUEST_BASE"
+            HEAD="$PULL_REQUEST_HEAD"
+            ;;
+          merge_group)
+            BASE="$MERGE_GROUP_BASE"
+            HEAD="$MERGE_GROUP_HEAD"
+            ;;
+          *)
+            echo "::error::Unsupported event type: $EVENT_NAME"
+            exit 1
+            ;;
+        esac
+
+        # Sanity checks
+        if [[ -z "$BASE" ]]; then
+          echo "::error::Could not resolve BASE SHA."
+          exit 1
+        elif [[ -z "$HEAD" ]]; then
+          echo "::error::Could not resolve HEAD SHA."
+          exit 1
+        fi
+
+        # Validate BASE exists and is a commit object.
+        if ! git cat-file -e "$BASE^{commit}" > /dev/null 2>&1; then
+          echo "::warning::Base SHA $BASE not found (likely a force push)."
+          echo "::notice::Falling back to merge-base with $DEFAULT_BRANCH."
+
+          git fetch origin --unshallow --quiet || git fetch origin --quiet
+          BASE=$(git merge-base HEAD "origin/$DEFAULT_BRANCH" 2>/dev/null)
+        fi
+
+        echo "base=$BASE" >> "$GITHUB_OUTPUT"
+        echo "head=$HEAD" >> "$GITHUB_OUTPUT"
+
+        echo "::notice::Diffing $BASE → $HEAD"
+    - name: Detect Changed Files
+      id: changes
+      shell: bash
+      env:
+        PATHS: ${{ inputs.paths }}
+        BASE: ${{ steps.revisions.outputs.base }}
+        HEAD: ${{ steps.revisions.outputs.head }}
+      run: |
+        set -euo pipefail
+
+        ALL_FILES=""
+
+        while IFS= read -r pattern; do
+          # Skip blank lines
+          [[ -z "$pattern" ]] && continue
+
+          FILES=$(git diff --name-only "$BASE" "$HEAD" -- "$pattern")
+          if [[ -n "$FILES" ]]; then
+            ALL_FILES+="$FILES"$'\n'
+            echo "::debug::Files changed matching pattern $pattern: $(echo "$FILES" | tr '\n' ' ')"
+          fi
+        done <<< "$PATHS"
+
+        # Dedup (a file could match multiple patterns)
+        ALL_FILES=$(echo "$ALL_FILES" | sort -u | sed '/^$/d')
+
+        if [[ -n "$ALL_FILES" ]]; then
+          echo "::notice::Matching changed files found: $(echo "$ALL_FILES" | tr '\n' ' ')"
+
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+          
+          # Set as multiline output
+          {
+            echo "changed_files<<EOF"
+            echo "$ALL_FILES"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+        else
+          echo "::notice::No matching changed files found."
+
+          echo "changed=false" >> "$GITHUB_OUTPUT"
+          echo "changed_files=" >> "$GITHUB_OUTPUT"
+        fi

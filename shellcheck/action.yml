@@ -1,0 +1,20 @@
+name: ShellCheck
+author: Milad Irannejad
+description: >
+  Runs static analysis on shell scripts using ShellCheck.
+  It detects syntax errors, unsafe constructs, and common pitfalls and provides clear, actionable feedback.
+inputs:
+  path:
+    description: >
+      Path to a shell script file or a directory.
+      Defaults to the repository root.
+    required: false
+    default: .
+runs:
+  using: docker
+  image: Dockerfile
+  args:
+    - ${{ inputs.path }}
+branding:
+  icon: terminal
+  color: black

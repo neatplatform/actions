@@ -1,0 +1,35 @@
+name: Go Test
+author: Milad Irannejad
+description: >
+  Runs Go tests, generates a code coverage profile and HTML report,
+  and optionally uploads results to Codecov and/or Code Climate.
+inputs:
+  path:
+    description: >
+      Root path of the Go module or package directory to test.
+      Defaults to the repository root.
+    required: false
+    default: .
+  codecov_token:
+    description: >
+      Upload token for Codecov (https://codecov.io).
+      When provided, the coverage profile is submitted to Codecov.
+    required: false
+  codeclimate_reporter_id:
+    description: >
+      Test Reporter ID for Code Climate (https://codeclimate.com).
+      When provided, the coverage report is submitted to Code Climate.
+    required: false
+outputs:
+  coverage_profile_file:
+    description: >
+      Absolute path to the generated coverage profile file by go tool cover.
+  coverage_report_file:
+    description: >
+      Absolute path to the generated HTML coverage report file, viewable in any browser.
+runs:
+  using: docker
+  image: Dockerfile
+branding:
+  icon: check
+  color: green

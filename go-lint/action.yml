@@ -1,0 +1,30 @@
+name: Go Lint
+author: Milad Irannejad
+description: >
+  Runs static analysis on Go code to detect errors, style violations, and potential bugs using golangci-lint.
+  Supports incremental analysis via a base git revision.
+inputs:
+  path:
+    description: >
+      Root path of the Go module or package directory to analyse.
+      Defaults to the repository root.
+    required: false
+    default: .
+  timeout:
+    description: >
+      Maximum duration allowed for the linting run before it is forcefully terminated.
+      Defaults to 5m.
+    required: false
+    default: 5m
+  from_revision:
+    description: >
+      A git revision (commit SHA, branch name, or tag) used as the base for incremental analysis.
+      When omitted, the entire codebase is analysed every time.
+      When provided, only files changed since this revision are linted, significantly reducing run time on large repositories.
+    required: false
+runs:
+  using: docker
+  image: Dockerfile
+branding:
+  icon: search
+  color: green

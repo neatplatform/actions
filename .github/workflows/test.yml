@@ -1,0 +1,140 @@
+name: Test
+on:
+  push:
+    branches:
+      - main  # Post-merge validation
+  pull_request:
+    branches:
+      - main  # Pre-merge validation
+  merge_group:
+    branches:
+      - main  # Merge queue validation
+
+permissions:
+  contents: read
+
+jobs:
+  # Test the check-paths actioninspect:
+  check-paths:
+    runs-on: ubuntu-latest
+    outputs:
+      go-lint-changed:    ${{ steps.go-lint.outputs.changed }}
+      go-test-changed:    ${{ steps.go-test.outputs.changed }}
+      k8s-lint-changed:   ${{ steps.k8s-lint.outputs.changed }}
+      ruby-lint-changed:  ${{ steps.ruby-lint.outputs.changed }}
+      shellcheck-changed: ${{ steps.shellcheck.outputs.changed }}
+      terraform-changed:  ${{ steps.terraform.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v6
+        name: Checkout Repository
+      - uses: ./check-paths
+        name: Check go-lint
+        id: go-lint
+        with:
+          paths: |
+            go-lint/**
+      - uses: ./check-paths
+        name: Check go-test
+        id: go-test
+        with:
+          paths: |
+            go-test/**
+      - uses: ./check-paths
+        name: Check k8s-lint
+        id: k8s-lint
+        with:
+          paths: |
+            k8s-lint/**
+      - uses: ./check-paths
+        name: Check ruby-lint
+        id: ruby-lint
+        with:
+          paths: |
+            ruby-lint/**
+      - uses: ./check-paths
+        name: Check shellcheck
+        id: shellcheck
+        with:
+          paths: |
+            shellcheck/**
+      - uses: ./check-paths
+        name: Check terraform
+        id: terraform
+        with:
+          paths: |
+            terraform/**
+
+  # Test the go-lint action
+  go-lint:
+    needs: check-paths
+    if: needs.check-paths.outputs.go-lint-changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./go-lint
+        with:
+          path: ./go-lint/test
+
+  # Test the go-test action
+  go-test:
+    needs: check-paths
+    if: needs.check-paths.outputs.go-test-changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./go-test
+        id: test
+        with:
+          path: ./go-test/test
+      - name: Upload Test Report
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-report
+          path: ./go-test/test/${{ steps.test.outputs.coverage_report_file }}
+
+  # Test the go-build action
+  k8s-lint:
+    needs: check-paths
+    if: needs.check-paths.outputs.k8s-lint-changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./k8s-lint
+        with:
+          path: ./k8s-lint/test
+          enable_kubeval: 'true'
+          enable_kubescore: 'false'
+
+  # Test the ruby-lint action
+  ruby-lint:
+    needs: check-paths
+    if: needs.check-paths.outputs.ruby-lint-changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./ruby-lint
+        with:
+          path: ./ruby-lint/test
+
+  # Test the shellcheck action
+  shellcheck:
+    needs: check-paths
+    if: needs.check-paths.outputs.shellcheck-changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./shellcheck
+        with:
+          path: ./shellcheck/test
+
+  # Test the terraform action
+  terraform:
+    needs: check-paths
+    if: needs.check-paths.outputs.terraform-changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./terraform
+        with:
+          path: ./terraform/test
+          args: validate

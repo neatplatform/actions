@@ -1,0 +1,29 @@
+name: Kubernetes Lint
+author: Milad Irannejad
+description: >
+  Validates and scores Kubernetes YAML resource manifests.
+  Catches schema violations, deprecated APIs, and security and reliability best-practice issues.
+inputs:
+  path:
+    description: >
+      Root path of the directory to scan for Kubernetes YAML manifests.
+      Defaults to the repository root.
+    required: false
+    default: .
+  run_kubeconform:
+    description: >
+      Whether to run kubeconform, which validates manifests against the official Kubernetes JSON schemas.
+      Defaults to 'true'.
+    required: false
+    default: 'true'
+  run_kubescore:
+    description: >
+      Whether to run kube-score, which analyses manifests against security and reliability best practices.
+      Defaults to 'true'.
+    required: false
+runs:
+  using: docker
+  image: Dockerfile
+branding:
+  icon: search
+  color: blue

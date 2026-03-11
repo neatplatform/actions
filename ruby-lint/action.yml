@@ -1,0 +1,18 @@
+name: Ruby Lint
+author: Milad Irannejad
+description: >
+  Runs static analysis on Ruby code using RuboCop.
+  It enforces style consistency, detect syntax errors, and flag common code quality issues.
+inputs:
+  path:
+    description: >
+      Root path of the Ruby project or directory to analyse.
+      Defaults to the repository root.
+    required: false
+    default: .
+runs:
+  using: docker
+  image: Dockerfile
+branding:
+  icon: search
+  color: red

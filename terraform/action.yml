@@ -1,0 +1,21 @@
+name: Terraform
+author: Milad Irannejad
+description: >
+  Runs a standard Terraform workflow — initialising the working directory,
+  validating configuration syntax, and generating an execution plan — to
+  surface infrastructure errors and preview changes before they are applied
+  to your cloud environment.
+inputs:
+  path:
+    description: >
+      Root path of the Terraform project containing the .tf files.
+      Useful for repositories with multiple Terraform projects in separate subdirectories.
+      Defaults to the repository root.
+    required: false
+    default: .
+runs:
+  using: docker
+  image: Dockerfile
+branding:
+  icon: layers
+  color: purple
