@@ -1,8 +1,5 @@
 name: Test
 on:
-  push:
-    branches:
-      - main  # Post-merge validation
   pull_request:
     branches:
       - main  # Pre-merge validation
