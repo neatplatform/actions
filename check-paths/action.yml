@@ -118,6 +118,7 @@ runs:
 
         ALL_FILES=""
 
+        # Read PATHS line by line
         while IFS= read -r pattern; do
           # Skip blank lines
           [[ -z "$pattern" ]] && continue
