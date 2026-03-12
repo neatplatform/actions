@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 jobs:
-  # Test the check-paths actioninspect:
+  # Test the check-paths action
   check-paths:
     runs-on: ubuntu-latest
     outputs:
