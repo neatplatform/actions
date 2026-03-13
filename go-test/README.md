@@ -13,6 +13,7 @@ and optionally uploads them to third-party coverage services.
 | **Input** | **Description** | **Default** |
 |----|----|----|
 | `path` | Path to the directory containing `*.go` and `*_test.go` files. | `.` |
+| `timeout` | Maximum time allowed for the tests to run. | `10m` |
 | `codecov_token` | If set, uploads the coverage report to [Codecov](https://codecov.io). | |
 | `codeclimate_reporter_id` | If set, uploads the coverage report to [Code Climate](https://codeclimate.com). | |
 
