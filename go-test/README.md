@@ -38,7 +38,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - name: Go Test
+      - name: Test
         uses: neatplatform/actions/go-test@main
 ```
 
@@ -54,7 +54,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - name: Go Test
+      - name: Test
         uses: neatplatform/actions/go-test@main
         with:
           codecov_token: ${{ secrets.CODECOV_TOKEN }}
@@ -72,7 +72,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - name: Go Test
+      - name: Test
         uses: neatplatform/actions/go-test@main
         with:
           codeclimate_reporter_id: ${{ secrets.CODECLIMATE_REPORTER_ID }}
@@ -92,7 +92,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - name: Go Test
+      - name: Test
         id: test
         uses: neatplatform/actions/go-test@main
       - name: Upload Coverage Report

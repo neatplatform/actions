@@ -40,6 +40,12 @@ on:
           When provided, the coverage profile is submitted to Codecov.
         type: string
         required: false
+      build_command:
+        description: >
+          Shell command used to compile and produce the Go binaries.
+          When provided, the build job runs; otherwise it is skipped.
+        type: string
+        required: false
 
 permissions:
   contents: read
@@ -49,8 +55,8 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-        name: Checkout Repository
+      - name: Checkout Repository
+        uses: actions/checkout@v6
       - name: Lint
         uses: neatplatform/actions/go-lint@main
         with:
@@ -61,8 +67,8 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-        name: Checkout Repository
+      - name: Checkout Repository
+        uses: actions/checkout@v6
       - name: Test
         id: test
         uses: neatplatform/actions/go-test@main
@@ -77,9 +83,14 @@ jobs:
           path: ${{ steps.test.outputs.coverage_report_file }}
   build:
     name: Build
+    if: inputs.build_command != ''
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-        name: Checkout Repository
+      - name: Checkout Repository
+        uses: actions/checkout@v6
       - name: Build Binary
-        run: go build .
+        shell: bash
+        env:
+          BUILD_COMMAND: ${{ inputs.build_command }}
+        run: |
+          "$BUILD_COMMAND"

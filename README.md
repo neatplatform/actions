@@ -1,6 +1,6 @@
 # actions
 
-A monorepo containing all shared GitHub Actions used across the organization.
+A monorepo containing all reusable GitHub **Actions** and **Workflows** used across the organization.
 
 ## CI Checks
 

@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - name: Kubernetes Lint
+      - name: Lint
         uses: neatplatform/actions/k8s-lint@main
 ```
 
@@ -48,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - name: Kubernetes Lint
+      - name: Lint
         uses: neatplatform/actions/k8s-lint@main
         with:
           path: ./manifests
@@ -66,7 +66,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - name: Kubernetes Lint
+      - name: Lint
         uses: neatplatform/actions/k8s-lint@main
         with:
           enable_kubeconform: 'false'
@@ -84,7 +84,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - name: Kubernetes Lint
+      - name: Lint
         uses: gardenbed/actions/k8s-lint@main
         with:
           enable_kubescore: 'false'
