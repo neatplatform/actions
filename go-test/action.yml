@@ -10,6 +10,12 @@ inputs:
       Defaults to the repository root.
     required: false
     default: .
+  timeout:
+    description: >
+      Maximum duration allowed for running the tests before it is forcefully terminated.
+      Defaults to 5m.
+    required: false
+    default: 10m
   codecov_token:
     description: >
       Upload token for Codecov (https://codecov.io).

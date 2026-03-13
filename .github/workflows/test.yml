@@ -22,41 +22,41 @@ jobs:
       shellcheck-changed: ${{ steps.shellcheck.outputs.changed }}
       terraform-changed:  ${{ steps.terraform.outputs.changed }}
     steps:
-      - uses: actions/checkout@v6
-        name: Checkout Repository
-      - uses: ./check-paths
-        name: Check go-lint
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+      - name: Check go-lint
         id: go-lint
+        uses: ./check-paths
         with:
           paths: |
             go-lint/**
-      - uses: ./check-paths
-        name: Check go-test
+      - name: Check go-test
         id: go-test
+        uses: ./check-paths
         with:
           paths: |
             go-test/**
-      - uses: ./check-paths
-        name: Check k8s-lint
+      - name: Check k8s-lint
         id: k8s-lint
+        uses: ./check-paths
         with:
           paths: |
             k8s-lint/**
-      - uses: ./check-paths
-        name: Check ruby-lint
+      - name: Check ruby-lint
         id: ruby-lint
+        uses: ./check-paths
         with:
           paths: |
             ruby-lint/**
-      - uses: ./check-paths
-        name: Check shellcheck
+      - name: Check shellcheck
         id: shellcheck
+        uses: ./check-paths
         with:
           paths: |
             shellcheck/**
-      - uses: ./check-paths
-        name: Check terraform
+      - name: Check terraform
         id: terraform
+        uses: ./check-paths
         with:
           paths: |
             terraform/**
@@ -79,14 +79,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - uses: ./go-test
-        id: test
+      - id: test
+        uses: ./go-test
         with:
           path: ./go-test/test
       - name: Upload Test Report
         uses: actions/upload-artifact@v7
         with:
-          name: coverage-report
+          name: Coverage Report
           path: ./go-test/test/${{ steps.test.outputs.coverage_report_file }}
 
   # Test the go-build action

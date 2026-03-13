@@ -38,8 +38,8 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - uses: neatplatform/actions/check-paths@main
-        id: check
+      - id: check
+        uses: neatplatform/actions/check-paths@main
         with:
           paths: |
             src/**
@@ -69,8 +69,8 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - uses: neatplatform/actions/check-paths@main
-        id: check
+      - id: check
+        uses: neatplatform/actions/check-paths@main
         with:
           paths: |
             terraform/**
@@ -98,13 +98,15 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - uses: neatplatform/actions/check-paths@main
+      - name: First Service
         id: first-service
+        uses: neatplatform/actions/check-paths@main
         with:
           paths: |
             first-service/**
-      - uses: neatplatform/actions/check-paths@main
+      - name: First Service
         id: second-service
+        uses: neatplatform/actions/check-paths@main
         with:
           paths: |
             second-service/**

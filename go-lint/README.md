@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - name: Go Lint
+      - name: Lint
         uses: neatplatform/actions/go-lint@main
 ```
 
@@ -47,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - name: Go Lint
+      - name: Lint
         uses: neatplatform/actions/go-lint@main
         with:
           path: ./project
@@ -65,7 +65,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - name: Go Lint
+      - name: Lint
         uses: neatplatform/actions/go-lint@main
         with:
           args: run ./project
@@ -85,7 +85,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - name: Go Lint
+      - name: Lint
         uses: neatplatform/actions/go-lint@main
         with:
           from_revision: origin/main

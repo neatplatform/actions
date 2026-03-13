@@ -13,6 +13,7 @@ and optionally uploads them to third-party coverage services.
 | **Input** | **Description** | **Default** |
 |----|----|----|
 | `path` | Path to the directory containing `*.go` and `*_test.go` files. | `.` |
+| `timeout` | Maximum time allowed for the tests to run. | `10m` |
 | `codecov_token` | If set, uploads the coverage report to [Codecov](https://codecov.io). | |
 | `codeclimate_reporter_id` | If set, uploads the coverage report to [Code Climate](https://codeclimate.com). | |
 
@@ -37,7 +38,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - name: Go Test
+      - name: Test
         uses: neatplatform/actions/go-test@main
 ```
 
@@ -53,7 +54,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - name: Go Test
+      - name: Test
         uses: neatplatform/actions/go-test@main
         with:
           codecov_token: ${{ secrets.CODECOV_TOKEN }}
@@ -71,7 +72,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - name: Go Test
+      - name: Test
         uses: neatplatform/actions/go-test@main
         with:
           codeclimate_reporter_id: ${{ secrets.CODECLIMATE_REPORTER_ID }}
@@ -91,7 +92,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - name: Go Test
+      - name: Test
         id: test
         uses: neatplatform/actions/go-test@main
       - name: Upload Coverage Report

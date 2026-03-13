@@ -9,7 +9,7 @@ on:
 
 jobs:
   config:
-    uses: neatplatform/renovate-config/.github/workflows/reusable-renovate.yml@main
     name: Config
+    uses: neatplatform/renovate-config/.github/workflows/reusable-renovate.yml@main
     permissions:
       contents: read

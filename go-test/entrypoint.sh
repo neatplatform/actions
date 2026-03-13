@@ -6,14 +6,19 @@ set -eu
 cd "$INPUT_PATH"
 
 # Run go test command ...
-go test -race -cover -covermode=atomic -coverprofile=c.out ./...
+go test \
+  -timeout "$INPUT_TIMEOUT" \
+  -race \
+  -cover \
+  -covermode=atomic \
+  -coverprofile=coverage.out ./...
 
 # Run if codecov_token input is set
-[ -n "$INPUT_CODECOV_TOKEN" ] && codecov -f c.out -t "$INPUT_CODECOV_TOKEN"
+[ -n "$INPUT_CODECOV_TOKEN" ] && codecov -f coverage.out -t "$INPUT_CODECOV_TOKEN"
 
 # Generate HTML coverage report
-go tool cover -html=c.out -o coverage.html
+go tool cover -html=coverage.out -o coverage.html
 
 # Set action output parameters
-echo "coverage_profile_file=c.out" >> "$GITHUB_OUTPUT"
+echo "coverage_profile_file=coverage.out" >> "$GITHUB_OUTPUT"
 echo "coverage_report_file=coverage.html" >> "$GITHUB_OUTPUT"

@@ -1,0 +1,96 @@
+## Reusable GitHub workflow for repositories with Go codes
+## Reference: https://docs.github.com/en/actions/how-tos/reuse-automations/reuse-workflows
+##
+
+name: Reusable Go Workflow
+on:
+  workflow_call:
+    inputs:
+      path:
+        description: >
+          Root path of the Go module or package directory.
+          Defaults to the repository root.
+        type: string
+        required: false
+        default: .
+      lint_timeout:
+        description: >
+          Maximum duration allowed for the linting run before it is forcefully terminated.
+          Defaults to 5m.
+        type: string
+        required: false
+        default: 5m
+      lint_from_revision:
+        description: >
+          A git revision (commit SHA, branch name, or tag) used as the base for incremental analysis.
+          When omitted, the entire codebase is analysed every time.
+          When provided, only files changed since this revision are linted, significantly reducing run time on large repositories.
+        type: string
+        required: false
+      test_timeout:
+        description: >
+          Maximum duration allowed for running the tests before it is forcefully terminated.
+          Defaults to 10m.
+        type: string
+        required: false
+        default: 10m
+      codecov_token:
+        description: >
+          Upload token for Codecov (https://codecov.io).
+          When provided, the coverage profile is submitted to Codecov.
+        type: string
+        required: false
+      build_command:
+        description: >
+          Shell command used to compile and produce the Go binaries.
+          When provided, the build job runs; otherwise it is skipped.
+        type: string
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+      - name: Lint
+        uses: neatplatform/actions/go-lint@main
+        with:
+          path:          ${{ inputs.path }}
+          timeout:       ${{ inputs.lint_timeout }}
+          from_revision: ${{ inputs.lint_from_revision }}
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+      - name: Test
+        id: test
+        uses: neatplatform/actions/go-test@main
+        with:
+          path:          ${{ inputs.path }}
+          timeout:       ${{ inputs.test_timeout }}
+          codecov_token: ${{ inputs.codecov_token }}
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v7
+        with:
+          name: Coverage Report
+          path: ${{ steps.test.outputs.coverage_report_file }}
+  build:
+    name: Build
+    if: inputs.build_command != ''
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+      - name: Build Binary
+        shell: bash
+        env:
+          BUILD_COMMAND: ${{ inputs.build_command }}
+        run: |
+          "$BUILD_COMMAND"

@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - name: Ruby Lint
+      - name: Lint
         uses: neatplatform/actions/ruby-lint@main
 ```
 
@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - name: Ruby Lint
+      - name: Lint
         uses: neatplatform/actions/ruby-lint@main
         with:
           path: ./project
@@ -57,7 +57,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - name: Ruby Lint
+      - name: Lint
         uses: neatplatform/actions/ruby-lint@main
         with:
           args: --auto-correct
