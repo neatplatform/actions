@@ -34,23 +34,24 @@ on:
         type: string
         required: false
         default: 10m
-      codecov_token:
-        description: >
-          Upload token for Codecov (https://codecov.io).
-          When provided, the coverage profile is submitted to Codecov.
-        type: string
-        required: false
       build_command:
         description: >
           Shell command used to compile and produce the Go binaries.
           When provided, the build job runs; otherwise it is skipped.
         type: string
         required: false
+    secrets:
+      codecov_token:
+        description: >
+          Upload token for Codecov (https://codecov.io).
+          When provided, the coverage profile is submitted to Codecov.
+        required: false
 
 permissions:
   contents: read
 
 jobs:
+  # Lint job
   lint:
     name: Lint
     runs-on: ubuntu-latest
@@ -63,6 +64,8 @@ jobs:
           path:          ${{ inputs.path }}
           timeout:       ${{ inputs.lint_timeout }}
           from_revision: ${{ inputs.lint_from_revision }}
+
+  # Test job
   test:
     name: Test
     runs-on: ubuntu-latest
@@ -75,12 +78,13 @@ jobs:
         with:
           path:          ${{ inputs.path }}
           timeout:       ${{ inputs.test_timeout }}
-          codecov_token: ${{ inputs.codecov_token }}
+          codecov_token: ${{ secrets.codecov_token }}
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v7
         with:
           name: Coverage Report
           path: ${{ steps.test.outputs.coverage_report_file }}
+  # Build job
   build:
     name: Build
     if: inputs.build_command != ''
