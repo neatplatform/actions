@@ -58,7 +58,7 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v6
-      - name: Lint
+      - name: Run Linters
         uses: neatplatform/actions/go-lint@main
         with:
           path:          ${{ inputs.path }}
@@ -72,7 +72,7 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v6
-      - name: Test
+      - name: Run Tests
         id: test
         uses: neatplatform/actions/go-test@main
         with:
@@ -84,6 +84,7 @@ jobs:
         with:
           name: Coverage Report
           path: ${{ steps.test.outputs.coverage_report_file }}
+
   # Build job
   build:
     name: Build
