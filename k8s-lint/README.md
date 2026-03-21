@@ -85,7 +85,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Lint
-        uses: gardenbed/actions/k8s-lint@main
+        uses: neatplatform/actions/k8s-lint@main
         with:
           enable_kubescore: 'false'
 ```
