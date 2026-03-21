@@ -2,6 +2,58 @@
 
 A monorepo containing all reusable GitHub **Actions** and **Workflows** used across the organization.
 
+## Example Workflow Usages
+
+### Go
+
+**Call test and lint jobs only**
+
+```yaml
+name: Go
+on: [push]
+
+jobs:
+  call:
+    name: Call
+    uses: neatplatform/actions/.github/workflows/reusable-go.yml@main
+    permissions:
+      contents: read
+```
+
+**Call test, lint, and build jobs**
+
+```yaml
+name: Go
+on: [push]
+
+jobs:
+  call:
+    name: Call
+    uses: neatplatform/actions/.github/workflows/reusable-go.yml@main
+    permissions:
+      contents: read
+    with:
+      build_command: go build .
+```
+
+**Call test, lint, and build jobs, and send coverage report to Codecov**
+
+```yaml
+name: Go
+on: [push]
+
+jobs:
+  call:
+    name: Call
+    uses: neatplatform/actions/.github/workflows/reusable-go.yml@main
+    permissions:
+      contents: read
+    with:
+      build_command: go build .
+    secrets:
+      codecov_token: ${{ secrets.CODECOV_TOKEN }}
+```
+
 ## CI Checks
 
 CI checks run on `pull_request` and `merge_queue` events, but only when the target branch is `main`.
