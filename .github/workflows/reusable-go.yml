@@ -95,9 +95,10 @@ jobs:
         uses: actions/checkout@v6
       - name: Set up Go
         uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
       - name: Build Binary
         shell: bash
-        env:
-          BUILD_COMMAND: ${{ inputs.build_command }}
         run: |
-          "$BUILD_COMMAND"
+          set -euo pipefail
+          ${{ inputs.build_command }}
