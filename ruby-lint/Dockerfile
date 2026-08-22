@@ -1,4 +1,4 @@
-FROM ruby:4.0.1-alpine
+FROM ruby:4.0.6-alpine
 
 LABEL org.opencontainers.image.source="https://github.com/neatplatform/actions"
 LABEL org.opencontainers.image.authors="Milad Irannejad <email_address>"

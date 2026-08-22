@@ -1,4 +1,4 @@
-FROM alpine:3.23.3
+FROM alpine:3.24.1
 
 LABEL org.opencontainers.image.source="https://github.com/neatplatform/actions"
 LABEL org.opencontainers.image.authors="Milad Irannejad <email_address>"

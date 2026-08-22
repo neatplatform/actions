@@ -1,4 +1,4 @@
-FROM golang:1.26.0
+FROM golang:1.27.0
 
 LABEL org.opencontainers.image.source="https://github.com/neatplatform/actions"
 LABEL org.opencontainers.image.authors="Milad Irannejad <email_address>"
