@@ -1,5 +1,5 @@
 # STAGE 1: Build
-FROM alpine:3.23.3 AS builder
+FROM alpine:3.24.1 AS builder
 
 LABEL org.opencontainers.image.source="https://github.com/neatplatform/actions"
 LABEL org.opencontainers.image.authors="Milad Irannejad <email_address>"
@@ -27,7 +27,7 @@ RUN regex='[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}' && \
     terraform version
 
 # STAGE 2: Final
-FROM alpine:3.23.3
+FROM alpine:3.24.1
 
 RUN apk add --no-cache make curl openssh git
 
