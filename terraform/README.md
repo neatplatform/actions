@@ -8,6 +8,7 @@ commands against a Terraform project in your repository.
 | **Input** | **Description** | **Default** |
 |----|----|----|
 | `path` | Path to the Terraform project directory. | `.` |
+| `init_args` | Extra arguments passed to `terraform init` command. | |
 
 ## Example Usages
 
@@ -45,5 +46,25 @@ jobs:
         uses: neatplatform/actions/terraform@main
         with:
           path: ./project
+          args: validate
+```
+
+Validate a project whose `terraform` block declares a backend, without connecting to it:
+
+```yaml
+name: CI
+on: [push]
+
+jobs:
+  terraform:
+    name: Terraform
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Validate
+        uses: neatplatform/actions/terraform@main
+        with:
+          path: ./project
+          init_args: -backend=false
           args: validate
 ```
