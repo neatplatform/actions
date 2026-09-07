@@ -13,6 +13,10 @@ inputs:
       Defaults to the repository root.
     required: false
     default: .
+  init_args:
+    description: Extra arguments for `terraform init` command.
+    required: false
+    default: ''
 runs:
   using: docker
   image: Dockerfile

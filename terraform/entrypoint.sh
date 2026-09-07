@@ -4,5 +4,5 @@ set -eu
 
 cd "$INPUT_PATH"
 
-terraform init
+terraform init ${INPUT_INIT_ARGS}
 terraform "$@"
